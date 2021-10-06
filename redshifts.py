@@ -115,6 +115,8 @@ z_galaxy_sdss=np.array(z_galaxy_sdss)
 z_galaxy_hetvips=np.array(z_galaxy_hetvips)
     
 from cf_redshifts import mkplot_cf_redshifts_qso
-mkplot_cf_redshifts_qso(z_qso_hetvips,z_qso_sdss)
+from cf_redshifts import mkplot_cf_redshifts_galaxy
+mkplot_cf_redshifts_qso(z_qso_hetvips,z_qso_sdss,20)
+mkplot_cf_redshifts_galaxy(z_galaxy_hetvips,z_galaxy_sdss,20)
 
     
