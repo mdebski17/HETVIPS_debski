@@ -7,8 +7,8 @@ sns.set_context("talk") # options include: talk, poster, paper
 sns.set_style("ticks")
 sns.set_style({"xtick.direction": "in","ytick.direction": "in",
                "xtick.top":True, "ytick.right":True,
-               "xtick.major.size":12, "xtick.minor.size":4,
-               "ytick.major.size":12, "ytick.minor.size":4,
+               "xtick.major.size":16, "xtick.minor.size":8,
+               "ytick.major.size":16, "ytick.minor.size":8,
                })
 ### color palettes
 colors = ["windows blue", "amber", "greyish", "faded green", "dusty purple"]
@@ -73,7 +73,7 @@ def find_s_NMAD(z_phot, z_spec):
 
     return s_NMAD
 
-def mkplot_cf_redshifts(z_phot, z_spec):
+def mkplot_cf_redshifts_galaxy(z_phot, z_spec):
     '''
     compare the redshifts
 
@@ -106,6 +106,44 @@ def mkplot_cf_redshifts(z_phot, z_spec):
     ax2.set_xlim(lims)
     ax2.set_xlabel(zspec_label)
     ax2.set_ylabel(r'$\Delta z$ / ($1+z$)')
+
+    plt.tight_layout()
+    plt.subplots_adjust(hspace=0.0)
+
+def mkplot_cf_redshifts_qso(z_phot, z_spec):
+    '''
+    compare the redshifts
+
+    assume z_spec == "truth" (plotted along x-axis)
+    '''
+    zphot_label = 'Photometric Redshift'
+    zspec_label = 'Spectroscopic Redshift'
+
+    scatter_kwargs = {'marker':'o', 's':40, 'zorder':2}
+    plot_kwargs = {'ls':'--','c':'grey','lw':1.5,'zorder':1}
+
+    gs=GridSpec(4,1)
+    fig=plt.figure(figsize=(7,8))
+
+    ax1 = fig.add_subplot(gs[0:-1])
+    ax1.minorticks_on()
+    ax1.scatter(z_spec, z_phot, **scatter_kwargs,alpha=0.4)
+    lims = [ 0, 1.1*np.max(np.hstack([z_phot, z_spec])) ]
+    ax1.plot(lims, lims, **plot_kwargs) 
+    ax1.set_xlim(lims)
+    ax1.set_ylim(lims)
+    ax1.set_ylabel(zphot_label,fontsize=24)
+    plt.setp(ax1.get_xticklabels(),visible=False)
+
+    ax2 = fig.add_subplot(gs[-1], sharex=ax1)
+    ax2.minorticks_on()
+    dz = (z_spec - z_phot) / (1. + z_spec)
+    ax2.scatter(z_spec, dz, **scatter_kwargs,alpha=0.6)
+    ax2.plot(lims, [0, 0], **plot_kwargs) 
+    ax2.set_xlim(lims)
+    ax2.set_xlabel(zspec_label,fontsize=24)
+    ax2.set_ylim(-0.0010,0.0008)
+    ax2.set_ylabel(r'$\Delta z$ / ($1+z$)',fontsize=24)
 
     plt.tight_layout()
     plt.subplots_adjust(hspace=0.0)
