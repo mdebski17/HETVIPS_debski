@@ -122,6 +122,7 @@ def mkplot_cf_redshifts_galaxy(z_phot, z_spec, add_stats=False):
     plt.tight_layout()
     plt.title('Galaxy Redshift Comparison',y=4.07,fontsize=24)
     plt.subplots_adjust(hspace=0.0)
+    plt.savefig("ure_galaxy_z",dpi=1200)
 
 def mkplot_cf_redshifts_qso(z_phot, z_spec, add_stats=False):
     '''
@@ -157,7 +158,7 @@ def mkplot_cf_redshifts_qso(z_phot, z_spec, add_stats=False):
     ax2.plot(lims, [0, 0], **plot_kwargs) 
     ax2.set_xlim(lims)
     ax2.set_xlabel(zspec_label,fontsize=24)
-    ax2.set_ylim(-0.0010,0.0008)
+    ax2.set_ylim(-0.010,0.008)
     ax2.set_ylabel(r'$\Delta z$ / ($1+z$)',fontsize=24)
     
         
@@ -172,5 +173,6 @@ def mkplot_cf_redshifts_qso(z_phot, z_spec, add_stats=False):
     plt.tight_layout()
     plt.title('Quasar Redshift Comparison',y=4.07,fontsize=24)
     plt.subplots_adjust(hspace=0.0)
+    plt.savefig("ure_qso_z",dpi=1200)
 
  

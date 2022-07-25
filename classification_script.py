@@ -7,12 +7,12 @@ Created on Wed Jun  9 17:18:59 2021
 from astropy.io import fits
 import numpy as np
 import matplotlib.pyplot as plt
-import scipy
 
 
-matches=np.loadtxt('C:\\Users\\mdebs\\OneDrive\\Desktop\\HETVIPS\\matches_unique')
-idx_virus=np.loadtxt('C:\\Users\\mdebs\\OneDrive\\Desktop\\HETVIPS\\idx_hetvips_unique')
-virus_class_1=np.loadtxt('C:\\Users\\mdebs\\OneDrive\\Desktop\\HETVIPS\\hetvips_unique_class_01')
+
+matches=np.loadtxt('C:\\Users\\mdebs\\OneDrive\\Desktop\\HETVIPS\\matches_01_22')
+idx_virus=np.loadtxt('C:\\Users\\mdebs\\OneDrive\\Desktop\\HETVIPS\\idx_hetvips_01_22')
+virus_class_1=np.loadtxt('C:\\Users\\mdebs\\OneDrive\\Desktop\\HETVIPS\\hetvips_class_01_22')
 virus_class_1=np.array(virus_class_1)
 virus_class_1=virus_class_1.astype(int)
 virus_class=[]
@@ -27,8 +27,11 @@ qso_match,qso_star,qso_galaxy,qso_und=(0,0,0,0)
 star,galaxy,qso=([],[],[])
 star_sdss,galaxy_sdss,qso_sdss=([],[],[])
 star_idx,galaxy_idx,qso_idx=([],[],[])
+galaxy_star_isolated=[]
+unknown=[]
+qso_galaxy_isolated=[]
 sdss_class=[None]*len(matches)
-text_file=open('C:\\Users\\mdebs\\OneDrive\\Desktop\\HETVIPS\\sdss_class_unique.txt','r')
+text_file=open('C:\\Users\\mdebs\\OneDrive\\Desktop\\HETVIPS\\sdss_class_01_22.txt','r')
 sdss_class=text_file.readlines()
 text_file.close()
 sdss_class=np.array(sdss_class)
@@ -50,6 +53,7 @@ for i in np.arange(len(matches)):
             star_qso+=1
         else:
             star_und+=1
+            unknown.append(i)
     elif sdss_class[i]=="GALAXY\n":
         if abs(sdss_z[i])<0.001:
             if virus_class[i]==1:
@@ -66,6 +70,7 @@ for i in np.arange(len(matches)):
         else:
             if virus_class[i]==1:
                 galaxy_star+=1
+                galaxy_star_isolated.append(i)
             elif virus_class[i]==2:
                 galaxy_match+=1
                 galaxy.append(k)
@@ -80,6 +85,7 @@ for i in np.arange(len(matches)):
             qso_star+=1
         elif virus_class[i]==2:
             qso_galaxy+=1
+            qso_galaxy_isolated.append(i)
         elif virus_class[i]==3:
             qso_match+=1
             qso.append(k)
@@ -112,24 +118,77 @@ print(qso_star,qso_galaxy,qso_match,qso_und)
 #for i in np.arange(len(galaxy_star_z)):
     #if abs(galaxy_star_z[i])<0.001:
         #redshift_zero+=1
-        
-#wave=np.linspace(3470,5540,1036)
-#sel=galaxy_star_isolated
+ 
+sn=np.loadtxt('C:\\Users\\mdebs\\OneDrive\\Desktop\\HETVIPS\\hetvips_sn_01_22')
+high_sn_und=[]
+for i in np.arange(len(idx_virus)):
+    if sn[i] >=5:
+        if virus_class[i]==4:
+            high_sn_und.append(i)
+
+wave=np.linspace(3470,5540,1036)
+sel=qso_galaxy_isolated
 
 #Display plots for SDSS Galaxy/Diagnose star
-#g=fits.open("classification_100.fits")
-#f=fits.open('sdss_and_diagnose.fits')
+g=fits.open('C:\\Users\\mdebs\\OneDrive\\Desktop\\HETVIPS\\classification_102.fits')
+f=fits.open('C:\\Users\\mdebs\\OneDrive\\Desktop\\HETVIPS\\diagnose_unique_and_sdss.fits')
 #for s in sel:
-    #plt.figure(figsize=(12,5))
-    #plt.plot(wave,f[0].data[s,3],lw=1)
-    #plt.plot(wave,g[0].data[s,0],lw=1,label='star')
-    #plt.plot(wave,g[0].data[s,1],lw=1,label='galaxy')
+ #   plt.figure(figsize=(12,5))
+  #  plt.plot(wave,f[0].data[s,3],lw=1,color='lightsteelblue')
+   # plt.plot(wave,g[0].data[s,1],lw=1,label='Diagnose galaxy',color='violet')
+    #plt.plot(wave,g[0].data[s,2],lw=1,label='SDSS quasar',color='darkmagenta')
     #print(s,g[2].data[s,1],g[1].data[s],g[4].data[s,1],f[6].data[s])
     #plt.legend()
+    #plt.xlabel(r"Wavelength ($\mathring{A}$)")
     #plt.show()
     #ans=input()
     #if ans == 'q':
-        #break
+     #   break
+
+#sel=galaxy_star_isolated    
+#for s in sel:
+ #   plt.figure(figsize=(12,5))
+  #  plt.plot(wave,f[0].data[s,3],lw=1,color='lightsteelblue')
+   # plt.plot(wave,g[0].data[s,1],lw=1,label='SDSS galaxy',color='violet')
+    #plt.plot(wave,g[0].data[s,0],lw=1,label='Diagnose star',color='darkmagenta')
+    #print(s,g[2].data[s,1],g[1].data[s],g[4].data[s,1],f[6].data[s])
+    #plt.legend()
+    #plt.xlabel(r"Wavelength ($\mathring{A}$)")
+    #plt.show()
+    #ans=input()
+    #if ans == 'q':
+     #   break
+ 
+sel=star_idx    
+for s in sel:
+    plt.figure(figsize=(12,5))
+    plt.plot(wave,f[0].data[s,3],lw=1,color="black")
+    print(f[0].data[s,3])
+    plt.plot(wave,g[0].data[s,1],lw=1,label='Galaxy fit', color="green")
+    plt.plot(wave,g[0].data[s,0],lw=1,label='Star fit',alpha=1,color="coral")
+    plt.plot(wave,g[0].data[s,2],lw=1,label='Quasar fit',color="blue")
+    print(s,g[2].data[s,1],g[1].data[s],g[4].data[s,1],f[6].data[s])
+    plt.legend()
+    plt.xlabel(r"Wavelength ($\mathring{A}$)")
+    plt.show()
+    ans=input()
+    if ans == 'q':
+        break
+    
+plt.figure(figsize=(12,5))
+plt.plot(wave,f[0].data[285,3],lw=1,color="black")
+plt.plot(wave,g[0].data[285,1],lw=1,label='Galaxy fit', color="green")
+plt.plot(wave,g[0].data[285,0],lw=1,label='Star fit',alpha=1,color="coral")
+plt.plot(wave,g[0].data[285,2],lw=1,label='Quasar fit',color="blue")
+print(285,g[2].data[285,1],g[1].data[285],g[4].data[285,1],f[6].data[285])
+plt.legend()
+plt.xlabel(r"Wavelength ($\mathring{A}$)")
+plt.savefig("undergrad_ex",dpi=1200)
+    
+#looking at i=5 in galaxy_star_isolated and i=1 in galaxy_star_isolated (SN)
+#looking at i=8 in qso_galaxy_isolated
+#i=5 in gsiso corresponds to 496, i=1 in gsiso corresponds to 61
+
 #trend=0
 #for i in np.arange(len(galaxy_star_isolated)):
     #j=galaxy_star_isolated[i]

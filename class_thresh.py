@@ -10,10 +10,11 @@ import matplotlib.pyplot as plt
 import scipy
 
 
-matches=np.loadtxt('C:\\Users\\mdebs\\OneDrive\\Desktop\\HETVIPS\\matches_unique')
+matches=np.loadtxt('C:\\Users\\mdebs\\OneDrive\\Desktop\\HETVIPS\\matches_01_22')
 idx_virus=np.loadtxt('C:\\Users\\mdebs\\OneDrive\\Desktop\\HETVIPS\\idx_hetvips_unique')
 h=fits.open('C:\\Users\\mdebs\\OneDrive\\Desktop\\HETVIPS\\classification_102.fits')
-virus_class_1=h[8].data
+#7,8,9,10
+virus_class_1=h[25].data
 virus_class_1=np.array(virus_class_1)
 virus_class_1=virus_class_1.astype(int)
 virus_class=[]
@@ -94,3 +95,10 @@ print(" ")
 print(galaxy_star,galaxy_match,galaxy_qso,galaxy_und)
 print(" ")
 print(qso_star,qso_galaxy,qso_match,qso_und)
+
+print(" ")
+print(star_match/(star_match+star_galaxy+star_qso))
+print(" ")
+print(galaxy_match/(galaxy_star+galaxy_match+galaxy_qso))
+print(" ")
+print(qso_match/(qso_star+qso_galaxy+qso_match))
